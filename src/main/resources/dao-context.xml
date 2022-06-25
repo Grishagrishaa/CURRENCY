@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+  <context:component-scan base-package="org.example.Currency.dao"/>
+
+
+
+
+  <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+    <property name="locations" value="classpath:config.properties"/>
+  </bean>
+
+  <bean id="EntityManager" class="org.example.Currency.dao.Manager">
+    <constructor-arg name="properties">
+      <props>
+        <prop key="jakarta.persistence.jdbc.driver">${jdbc.driver}</prop>
+        <prop key="jakarta.persistence.jdbc.url">${jdbc.url}</prop>
+        <prop key="jakarta.persistence.jdbc.user">${login}</prop>
+        <prop key="jakarta.persistence.jdbc.password">${password}</prop>
+        <prop key="jakarta.persistence.schema-generation.database.action">${database.action}</prop>
+        <prop key="hibernate.format_sql">${format_sql}</prop>
+        <prop key="hibernate.show_sql">${show_sql}</prop>
+      </props>
+    </constructor-arg>
+  </bean>
+
+  <bean id="CurrencyDao" class="org.example.Currency.dao.CurrencyDao" primary="false">
+    <constructor-arg name="manager" ref="EntityManager"/>
+  </bean>
+
+
+
+</beans>
+
+
+
+
+
+
+
