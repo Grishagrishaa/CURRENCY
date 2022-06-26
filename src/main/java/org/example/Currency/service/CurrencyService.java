@@ -27,11 +27,11 @@ public class CurrencyService implements ICurrencyService {
     }
 
 
-    public Currency get(Long id){
+    public CurrencyReadDto get(Long id){
         if(idCheck.test(id)){
             throw new IllegalArgumentException("INVALID ID!");
         }
-        return dao.get(id);
+        return new CurrencyReadDto(dao.get(id));
     }
 
     public List<CurrencyReadDto> getAll(){

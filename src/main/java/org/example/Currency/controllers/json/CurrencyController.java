@@ -21,8 +21,7 @@ public class CurrencyController {
 
     @GetMapping("/{id}")
     public CurrencyReadDto get(@PathVariable Long id){
-        Currency currency = service.get(id);
-        return new CurrencyReadDto(currency);
+        return service.get(id);
     }
 
     @GetMapping

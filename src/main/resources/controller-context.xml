@@ -19,5 +19,6 @@
   <mvc:annotation-driven/>
 <!--  PLACE WHERE SCAN-->
   <context:component-scan base-package="org.example.Currency.controllers.json"/>
+  <context:annotation-config/>
 
 </beans>
