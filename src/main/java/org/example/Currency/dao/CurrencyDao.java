@@ -8,6 +8,8 @@ import org.example.Currency.api.ICurrencyDao;
 import org.example.Currency.api.IEntityManager;
 import org.example.Currency.dao.entity.Currency;
 import org.example.Currency.dto.CurrencyCreateDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +32,8 @@ public class CurrencyDao implements ICurrencyDao {
         entityManager.close();
 
         if(currencyFromBase == null){
-            throw new EntityNotFoundException("ENTITY WASN'T FOUND");
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "ENTITY WASN'T FOUND");
+//            throw new EntityNotFoundException("ENTITY WASN'T FOUND");
         }
 
         return currencyFromBase;
