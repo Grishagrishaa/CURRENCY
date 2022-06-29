@@ -2,7 +2,9 @@ package org.example.Currency.dao.entity;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import jakarta.persistence.*;
+import org.example.Currency.dto.CurrencyCreateDto;
+
+import javax.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,10 +23,16 @@ public class Currency implements Serializable {
     private LocalDateTime createDate;
     @Version
 //    @JsonFormat(with = JsonFormat.Feature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateDate;
 
     public Currency() {
+    }
+
+    public Currency(CurrencyCreateDto dto ){
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.code = dto.getCode();
+        //createDate from base
     }
 
     public Currency(String name, String description, String code, LocalDateTime createDate) {

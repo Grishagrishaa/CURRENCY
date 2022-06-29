@@ -7,13 +7,18 @@ import org.example.Currency.dto.CurrencyCreateDto;
 import org.example.Currency.dto.CurrencyReadDto;
 import org.example.Currency.predicates.IdPredicate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.OptimisticLockException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 @Service
@@ -27,17 +32,23 @@ public class CurrencyService implements ICurrencyService {
     }
 
 
-    public CurrencyReadDto get(Long id){
-        if(idCheck.test(id)){
-            throw new IllegalArgumentException("INVALID ID!");
+    public Currency get(Long id){
+        checkId(id);
+
+        Currency currency = null;
+        if(dao.findById(id).isPresent()){
+            currency = dao.findById(id).get();
+        }else{
+            throw new EntityNotFoundException("INVALID ID, NOT FOUND");
         }
-        return new CurrencyReadDto(dao.get(id));
+
+        return dao.findById(id).get();
     }
 
     public List<CurrencyReadDto> getAll(){
 
         List<CurrencyReadDto> readList = new ArrayList<>();
-        for (Currency currency : dao.getAll()) {
+        for (Currency currency : dao.findAll()) {
             readList.add(new CurrencyReadDto(currency));
         }
 
@@ -45,28 +56,48 @@ public class CurrencyService implements ICurrencyService {
     }
 
     public void create(CurrencyCreateDto dto){
-        dao.create( new Currency(dto.getName(),
+        dao.save( new Currency(dto.getName(),
                     dto.getDescription(),
                     dto.getCode(),
                     LocalDateTime.now()) );// <- createDate
     }
 
-    public void update(CurrencyCreateDto currencyCreateDto, Long id, Long updateDateMillis){
-        if(idCheck.test(id)){
-            throw new IllegalArgumentException("INVALID ID");
+
+
+    public void update(CurrencyCreateDto dto, Long id, Long updateDateMillis){
+        checkId(id);
+
+        Currency currency = get(id);
+                                                     //MILLIS --> LOCALDATETIME
+        if(!Objects.equals(currency.getUpdateDate(), convertDate(updateDateMillis))){
+            throw new OptimisticLockException("CURRENCY WAS ALREADY UPDATED");
         }
 
-        LocalDateTime updateDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(updateDateMillis), ZoneId.systemDefault());//MILLIS --> LOCALDATETIME
-        dao.update(currencyCreateDto, id, updateDate);
+        currency.setName(dto.getName());
+        currency.setDescription(dto.getDescription());
+        currency.setCode(dto.getCode());
+        dao.save(currency);
     }
 
     public void delete(Long id, Long updateDateMillis){
-        if(idCheck.test(id)){
-            throw new IllegalArgumentException("INVALID ID");
+        checkId(id);
+
+        Currency currency = get(id);
+                                                     //MILLIS --> LOCALDATETIME
+        if(!Objects.equals(currency.getUpdateDate(), convertDate(updateDateMillis))){
+            throw new OptimisticLockException("CURRENCY WAS ALREADY UPDATED");
         }
 
-        LocalDateTime updateDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(updateDateMillis), ZoneId.systemDefault());//MILLIS --> LOCALDATETIME
-        dao.delete(id, updateDate);
+        dao.deleteById(id);
     }
 
+    private void checkId(Long id){
+        if(idCheck.test(id)){
+            throw new IllegalArgumentException("INVALID ID!");
+        }
+    }
+
+    private LocalDateTime convertDate(Long updateDateMillis){
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(updateDateMillis), ZoneId.systemDefault());
+    }
 }

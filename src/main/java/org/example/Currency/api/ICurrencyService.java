@@ -7,7 +7,7 @@ import org.example.Currency.dto.CurrencyReadDto;
 import java.util.List;
 
 public interface ICurrencyService {
-    CurrencyReadDto get(Long id);
+    Currency get(Long id);
     List<CurrencyReadDto> getAll();
     void create(CurrencyCreateDto dto);
     void update(CurrencyCreateDto currencyCreateDto, Long id, Long updateDateMillis);
