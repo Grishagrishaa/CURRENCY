@@ -4,6 +4,8 @@ import org.example.Currency.api.ICurrencyService;
 import org.example.Currency.dao.entity.Currency;
 import org.example.Currency.dto.CurrencyCreateDto;
 import org.example.Currency.dto.CurrencyReadDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,21 +22,23 @@ public class CurrencyController {
     }
 
     @GetMapping("/{id}")
-    public CurrencyReadDto get(@PathVariable Long id){
-        return new CurrencyReadDto(service.get(id));
+    public ResponseEntity<CurrencyReadDto> get(@PathVariable Long id){
+        return new ResponseEntity<>(new CurrencyReadDto(service.get(id)), HttpStatus.OK);
     }
 
     @GetMapping
-    public List<CurrencyReadDto> getAll(){
-        return service.getAll();
+    public ResponseEntity<List<CurrencyReadDto>> getAll(){
+        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public void create (@RequestBody CurrencyCreateDto dto){
         service.create(dto);
     }
 
     @PutMapping("/{id}/{updateDate}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void update(@RequestBody CurrencyCreateDto dto,
                        @PathVariable Long id,
                        @PathVariable Long updateDate){
@@ -43,6 +47,7 @@ public class CurrencyController {
 
 
     @DeleteMapping("/{id}/{updateDate}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void delete( @PathVariable Long id,
                         @PathVariable Long updateDate){
         service.delete(id, updateDate);

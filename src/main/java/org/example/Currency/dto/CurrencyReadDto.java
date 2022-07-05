@@ -31,9 +31,9 @@ public class CurrencyReadDto {
         this.description = currencyEntity.getDescription();
         this.code = currencyEntity.getCode();
 
-        //LOCALDATETIME --> MILLIS
         this.createDateEpoch = currencyEntity.getCreateDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         this.updateDateEpoch = currencyEntity.getUpdateDate().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        //LOCALDATETIME --> MILLIS
     }
 
     public CurrencyReadDto() {

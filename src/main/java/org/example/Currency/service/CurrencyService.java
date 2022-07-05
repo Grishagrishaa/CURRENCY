@@ -42,7 +42,7 @@ public class CurrencyService implements ICurrencyService {
             throw new EntityNotFoundException("INVALID ID, NOT FOUND");
         }
 
-        return dao.findById(id).get();
+        return currency;
     }
 
     public List<CurrencyReadDto> getAll(){

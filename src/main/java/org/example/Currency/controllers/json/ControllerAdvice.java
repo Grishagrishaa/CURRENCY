@@ -37,7 +37,7 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler(OptimisticLockException.class)
-    @ResponseStatus(PRECONDITION_FAILED)
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
     public ErrorMessage handle(OptimisticLockException e){
         return new ErrorMessage(
                 e.getMessage(),
